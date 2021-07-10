@@ -162,6 +162,7 @@ class WaitForSIMCardWorker(QObject):
 class ReadCardWorker(QObject):
     finished = pyqtSignal(int, object)
     progress = pyqtSignal(int)
+    read_iccid_and_imsi = pyqtSignal(str, str)
 
     def __init__(self, df, scc, sl, parent=None):
         super(ReadCardWorker, self).__init__()
@@ -177,18 +178,20 @@ class ReadCardWorker(QObject):
 
         card = get_card("auto", self._scc)
 
-        _, imsi = read_card_initial_data(card)
+        iccid, imsi = read_card_initial_data(card)
+        # Update the iccid and imsi labels
+        self.read_iccid_and_imsi.emit(iccid, imsi)
 
         # Checking that FieldValue's length in bytes matches binary size of field (since we want to completely overwrite each field)
         # if we can read the binary size, but it doesn't match FieldValue's length in bytes, then it will raise a ValueError
         # and we alert user to fix the input file
 
-        self._df.apply(
-            lambda row: verify_full_field_width(
-                card, row["FieldName"], row["FieldValue"]
-            ),
-            axis=1,
-        )
+        # self._df.apply(
+        #     lambda row: verify_full_field_width(
+        #         card, row["FieldName"], row["FieldValue"]
+        #     ),
+        #     axis=1,
+        # )
 
         num_fields = len(self._df.index)
 
@@ -216,6 +219,7 @@ class ReadCardWorker(QObject):
 class WriteCardWorker(QObject):
     finished = pyqtSignal(int, object)
     progress = pyqtSignal(int)
+    read_iccid_and_imsi = pyqtSignal(str, str)
 
     def __init__(
         self,
@@ -245,7 +249,10 @@ class WriteCardWorker(QObject):
 
         card = get_card("auto", self._scc)
 
-        _, imsi = read_card_initial_data(card)
+        iccid, imsi = read_card_initial_data(card)
+        # Update the iccid and imsi labels
+        self.read_iccid_and_imsi.emit(iccid, imsi)
+        
         if self._imsi_to_pin_dict is not None:
             pin_adm = self._imsi_to_pin_dict.get(imsi, None)
             assert pin_adm is not None, f"IMSI {imsi} is not found in PIN ADM JSON file"
@@ -275,12 +282,20 @@ class WriteCardWorker(QObject):
             percent_completed = int(((row.name + 1) / num_fields) * 100)
             self.progress.emit(percent_completed)
 
-            return write_fieldname_simple(
+            read_value_after_write = write_fieldname_simple(
                 card,
                 row["FieldName"],
                 row["FieldValue"],
                 dry_run=self._dry_run,
             )
+
+            # Update ICCID and IMSI labels to new written values
+            if row["FieldName"] == "IMSI":
+                self.read_iccid_and_imsi.emit(None, read_value_after_write)
+            elif row["FieldName"] == "ICCID":
+                self.read_iccid_and_imsi.emit(read_value_after_write, None)
+
+            return read_value_after_write
 
         # For each FieldName, FieldValue pair, write the value
         self._df["Value On Card"] = self._df.apply(
@@ -390,6 +405,15 @@ class SIM_CSV_GUI:
         # Progress bar is initially hidden
         self.setup_progress_bar()
         self.ui.readWriteProgressBar.setVisible(False)
+
+        # IMSI and ICCID labels selectable
+        self.ui.imsiValue.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.ui.iccidValue.setTextInteractionFlags(Qt.TextSelectableByMouse)
+
+        # Filenames selectable
+        self.ui.dataFilenameLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.ui.admPinFileFilenameLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)
+
 
     def connect_signals_with_slots(self):
         # Data
@@ -540,6 +564,9 @@ class SIM_CSV_GUI:
 
         # When Worker emits 'progress' signal, update the progress bar value
         read_card_worker.progress.connect(self.set_progress_bar_value)
+        
+        # When Worker reads iccid and imsi, and emits a signal, then we update the labels
+        read_card_worker.read_iccid_and_imsi.connect(self.update_iccid_and_imsi_labels)
 
         def __worker_finished(finish_code, new_dataframe):
             log.debug(f"Read Card Worker Finished With {finish_code}")
@@ -688,8 +715,14 @@ class SIM_CSV_GUI:
 
                     self.disable_input_elements()
 
+                    # Enable showing ascii table on ask to write dialog
+                    self.ui.viewAsciiCheckbox.setDisabled(False)
+
                     def __accept_ask_write_callback():
                         log.debug("Writing SIM Card")
+                        # If user accepts write values dialog, show hex values
+                        self.ui.viewAsciiCheckbox.setChecked(False)
+
                         self.write_card(
                             dataframe,
                             scc,
@@ -767,6 +800,9 @@ class SIM_CSV_GUI:
         # When Worker emits 'progress' signal, update the progress bar value
         write_card_worker.progress.connect(self.set_progress_bar_value)
 
+        # When Worker reads iccid and imsi, and emits a signal, then we update the labels
+        write_card_worker.read_iccid_and_imsi.connect(self.update_iccid_and_imsi_labels)
+
         def __worker_finished(finish_code, new_dataframe):
             # Enable Buttons before callback is called, because callback might want to Disable buttons
             self.enable_input_elements()
@@ -775,6 +811,9 @@ class SIM_CSV_GUI:
                 if callback is not None:
                     log.debug("Running write_card() callback function")
                     callback(dataframe=dataframe, scc=scc, sl=sl)
+                self.openMessageBox("Write successful!")
+            else:
+                self.openErrorDialog("Write failed!")
 
             write_card_worker.deleteLater()
             write_card_thread.quit()
@@ -808,6 +847,13 @@ class SIM_CSV_GUI:
 
     def set_progress_bar_value(self, value):
         self.ui.readWriteProgressBar.setValue(value)
+
+    def update_iccid_and_imsi_labels(self, iccid=None, imsi=None):
+        if iccid is not None:
+            self.ui.iccidValue.setText(iccid)
+
+        if imsi is not None:
+            self.ui.imsiValue.setText(imsi)
 
     def get_filtered_dataframe(self):
         """Returns dataframe after filter"""
