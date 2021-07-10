@@ -7,9 +7,9 @@ for req_filename in requirements_files:
         required_packages.extend(f.read().splitlines())
 
 setuptools.setup(
-    name="sim_csv_script",
+    name="sim_csv_gui",
     version="1.1.1",
-    description="Program SIM cards by importing CSV file",
+    description="GUI powered by sim_csv_script",
     packages=setuptools.find_packages("src"),
     package_dir={"": "src"},
     url="",
@@ -27,7 +27,6 @@ setuptools.setup(
     install_requires=required_packages,
     entry_points={
         "console_scripts": [
-            "sim_csv_script = sim_csv_script.app:main",
             "sim_csv_gui = sim_csv_gui.app:main"
         ]
     },
