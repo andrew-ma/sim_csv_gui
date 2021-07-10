@@ -647,6 +647,9 @@ class SIM_CSV_GUI:
         if self.ui.admPinRadioButton.isChecked():
             # Make sure that the ADM pin is valid
             pin_adm = self.ui.admPinLineEdit.text().strip()
+            if not pin_adm:
+                raise Exception("ADM PIN is empty")
+            
             if pin_adm.startswith("0x") and not is_valid_hex(pin_adm):
                 raise Exception("ADM PIN is not valid hex")
             imsi_to_pin_dict = None
