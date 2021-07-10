@@ -8,6 +8,7 @@ Fields and values are specified in a CSV file, and optionally a filter script ca
 
 ## Python Package Dependencies:
 * sim_csv_script @ https://github.com/andrew-ma/sim_csv_script/archive/main.zip
+* PyQt5
 
 ## Installation
 ```
