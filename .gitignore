@@ -5,3 +5,7 @@ __pycache__/
 build/
 *.egg-info/
 .qt_for_python/
+build/
+dist/
+venv/
+*.spec
