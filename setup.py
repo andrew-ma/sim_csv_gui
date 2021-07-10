@@ -1,6 +1,6 @@
 import setuptools
 
-requirements_files = ["requirements.txt", "requirements_gui.txt"]
+requirements_files = ["requirements.txt"]
 required_packages = []
 for req_filename in requirements_files:
     with open(req_filename) as f:
