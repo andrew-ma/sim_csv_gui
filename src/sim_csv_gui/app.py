@@ -904,7 +904,9 @@ class SIM_CSV_GUI:
             # prepend '0x' to the current value in input field
             self.ui.admPinLineEdit.setText("0x" + admPin)
         elif state == Qt.Unchecked:
-            self.ui.admPinLineEdit.setText(admPin.removeprefix("0x"))
+            if admPin.startswith("0x"):
+                admPin = admPin[2:]
+            self.ui.admPinLineEdit.setText(admPin)
 
     # Filter
     def on_filterCheckbox_stateChanged(self, state: int):
