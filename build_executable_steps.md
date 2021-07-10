@@ -3,7 +3,7 @@
 * Download UPX at https://github.com/upx/upx/releases/latest, unzip it, and set the environment variable `UPX_PATH` to the directory
 ```
 set "UPX_PATH=C:\Users\srcus\Desktop\just_script\upx-3.96-win64"
-set "APP_NAME=SIM CITY"
+set "APP_NAME=SIM CSV GUI"
 ```
 
 * Run in cmd prompt
