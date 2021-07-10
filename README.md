@@ -7,7 +7,7 @@ Fields and values are specified in a CSV file, and optionally a filter script ca
 * Python 3.7 or later ([Python Installation Steps](python_installation_steps.md))
 
 ## Python Package Dependencies:
-* sim_csv_script @ https://github.com/andrew-ma/sim_csv_script/main.zip
+* sim_csv_script @ https://github.com/andrew-ma/sim_csv_script/archive/main.zip
 
 ## Installation
 ```
