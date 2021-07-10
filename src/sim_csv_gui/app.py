@@ -331,7 +331,7 @@ class SIM_CSV_GUI:
         self.table_model = None
         self.ascii_table_model = None
 
-        self.dry_run = True
+        self.dry_run = False
 
         self.settings = TempSettings()
 
