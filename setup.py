@@ -8,7 +8,7 @@ for req_filename in requirements_files:
 
 setuptools.setup(
     name="sim_csv_gui",
-    version="1.1.1",
+    version="1.2.1",
     description="GUI powered by sim_csv_script",
     packages=setuptools.find_packages("src"),
     package_dir={"": "src"},

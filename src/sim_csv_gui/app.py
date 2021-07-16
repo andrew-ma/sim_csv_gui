@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import (
     QApplication,
     QFileDialog,
     QMessageBox,
+    QFrame
 )
 from PyQt5.QtCore import (
     QDir,
@@ -329,6 +330,8 @@ class TempSettings:
 class SIM_CSV_GUI:
     def __init__(self):
         self.app = QApplication(sys.argv)
+        self.app.setStyle('Fusion')
+
         self.MainWindow = QMainWindow()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self.MainWindow)
@@ -409,6 +412,13 @@ class SIM_CSV_GUI:
         # IMSI and ICCID labels selectable
         self.ui.imsiValue.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.ui.iccidValue.setTextInteractionFlags(Qt.TextSelectableByMouse)
+
+        self.ui.imsiContainer.setFrameShape(QFrame.Panel)
+        self.ui.imsiContainer.setFrameShadow(QFrame.Sunken)
+        self.ui.imsiContainer.setLineWidth(1)
+        self.ui.iccidContainer.setFrameShape(QFrame.Panel)
+        self.ui.iccidContainer.setFrameShadow(QFrame.Sunken)
+        self.ui.iccidContainer.setLineWidth(1)
 
         # Filenames selectable
         self.ui.dataFilenameLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)

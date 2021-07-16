@@ -24,12 +24,22 @@
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="QGroupBox" name="dataGroup">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
       <property name="title">
        <string>Data</string>
       </property>
       <layout class="QFormLayout" name="formLayout_2">
        <item row="0" column="0">
         <widget class="QLabel" name="inputDataFileLabel">
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Input Data File (CSV)</string>
          </property>
@@ -67,6 +77,14 @@
              <height>0</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="text">
             <string>Choose File</string>
            </property>
@@ -74,6 +92,11 @@
          </item>
          <item>
           <widget class="QLabel" name="dataFilenameLabel">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>No file selected</string>
            </property>
@@ -86,12 +109,22 @@
     </item>
     <item>
      <widget class="QGroupBox" name="writeGroup">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
       <property name="title">
        <string>Required for write</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
         <widget class="QGroupBox" name="writeLeftSide">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true">border:0</string>
          </property>
@@ -128,6 +161,14 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="cursor">
+             <cursorShape>ArrowCursor</cursorShape>
+            </property>
             <property name="text">
              <string>ADM PIN</string>
             </property>
@@ -143,6 +184,14 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="cursor">
+             <cursorShape>ArrowCursor</cursorShape>
             </property>
             <property name="text">
              <string>ADM PIN File (JSON)</string>
@@ -194,6 +243,11 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>hexadecimal</string>
                </property>
@@ -225,6 +279,14 @@
                  <height>0</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>9</pointsize>
+                </font>
+               </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
                <property name="text">
                 <string>Choose File</string>
                </property>
@@ -237,6 +299,11 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>9</pointsize>
+                </font>
                </property>
                <property name="text">
                 <string>No file selected</string>
@@ -254,6 +321,11 @@
     </item>
     <item>
      <widget class="QGroupBox" name="filterGroup">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
       <property name="title">
        <string>Filter</string>
       </property>
@@ -265,6 +337,14 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>ArrowCursor</cursorShape>
          </property>
          <property name="text">
           <string>Filter Command</string>
@@ -294,6 +374,14 @@
          </item>
          <item>
           <widget class="QPushButton" name="filterApplyButton">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="text">
             <string>Apply</string>
            </property>
@@ -306,6 +394,11 @@
     </item>
     <item>
      <widget class="QGroupBox" name="tableGroup">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
       <property name="title">
        <string>Table</string>
       </property>
@@ -313,10 +406,18 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QWidget" name="imsiContainer" native="true">
+          <widget class="QFrame" name="imsiContainer">
            <layout class="QFormLayout" name="formLayout">
+            <property name="formAlignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
             <item row="0" column="0">
              <widget class="QLabel" name="imsiLabel">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>IMSI</string>
               </property>
@@ -333,10 +434,18 @@
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="iccidContainer" native="true">
+          <widget class="QFrame" name="iccidContainer">
            <layout class="QFormLayout" name="formLayout_3">
+            <property name="formAlignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
             <item row="0" column="0">
              <widget class="QLabel" name="iccidLabel">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>ICCID</string>
               </property>
@@ -360,6 +469,14 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="cursor">
+            <cursorShape>ArrowCursor</cursorShape>
+           </property>
            <property name="text">
             <string>View ASCII</string>
            </property>
@@ -375,12 +492,30 @@
     </item>
     <item>
      <widget class="QGroupBox" name="readWriteGroup">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
       <property name="title">
        <string>Read/Write</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_11">
        <item>
         <widget class="QPushButton" name="readButton">
+         <property name="font">
+          <font>
+           <pointsize>25</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">padding: 15px; color: white; background-color: rgb(33, 203, 143);border-radius: 20px; border: 2px solid rgb(86, 86, 86); margin-left: 10px;</string>
+         </property>
          <property name="text">
           <string>READ</string>
          </property>
@@ -444,6 +579,17 @@
        </item>
        <item>
         <widget class="QPushButton" name="writeButton">
+         <property name="font">
+          <font>
+           <pointsize>25</pointsize>
+          </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">padding: 15px; color: white; background-color:rgb(233, 98, 98); border-radius: 20px;border: 2px solid rgb(86, 86, 86); margin-right: 10px;</string>
+         </property>
          <property name="text">
           <string>WRITE</string>
          </property>
