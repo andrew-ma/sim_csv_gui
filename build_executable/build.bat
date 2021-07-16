@@ -20,9 +20,24 @@ if defined APP_NAME (
     exit /b
 )
 
+:: Create new venv
 call clean_env.bat
-call install_requirements.bat
-call run_pyinstaller.bat
-%MY_PYTHON% move_dist_lib_files.py
 
-cd dist && tar.exe -a -c -f %APP_NAME%.zip %APP_NAME%
+%MY_PYTHON% -m pip install --upgrade pip
+
+:: Install pip requirements
+call install_requirements.bat
+
+:: Run Pyinstaller to generate executable and embeddable zip folder
+call run_pyinstaller.bat
+
+:: For embeddable zip folder, move files to lib/ to reduce clutter
+:: %MY_PYTHON% move_dist_lib_files.py
+
+:: Zip the Folder
+:: cd dist && tar.exe -a -c -f %APP_NAME%.zip %APP_NAME%
+
+echo Done!
+
+:: Deactivate the venv
+deactivate

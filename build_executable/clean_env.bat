@@ -5,7 +5,9 @@
 ::conda activate temp_build
 ::#conda install conda-forge::numpy "blas=*=openblas"
 @echo off
-del /s /q build dist venv
-rmdir /s /q build dist venv
-python -m venv venv
+echo Deleting "build", "dist", and "venv" ...
+del /s /q build dist venv >nul 2>&1
+rmdir /s /q build dist venv >nul 2>&1
+echo Creating new venv
+%MY_PYTHON% -m venv venv
 venv\Scripts\activate
