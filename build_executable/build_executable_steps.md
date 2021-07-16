@@ -1,22 +1,30 @@
-# Build Executable Steps
+# Build Executable Steps (Windows)
 
-* Download UPX at https://github.com/upx/upx/releases/latest, unzip it, and set the environment variable `UPX_PATH` to the directory
+1. Set required environment variables.
 ```
-set "UPX_PATH=C:\Users\srcus\Desktop\just_script\upx-3.96-win64"
-set "APP_NAME=SIM CSV GUI"
-```
-
-* Run in cmd prompt
-```
-cd build_executable
-deactivate
-clean_env.bat
-install_requirements.bat
-run_pyinstaller.bat
-python move_dist_lib_files.py
+set "APP_NAME=sim_csv_gui"
+set "MY_PYTHON=python"
 ```
 
-* The final result is in the dist/ folder, and this can be zipped up. Click on the .exe file to run.
+
+2. Ensure python is installed and added to PATH.
+> Running "`%MY_PYTHON% -m venv -h`" should not result in an error
+
+
+3. Download UPX at https://github.com/upx/upx/releases/latest, and extract it.  Set the `UPX_PATH` environment variable to the extracted upx directory.
+```
+set "UPX_PATH=upx-3.96-win64"
+dir %UPX_PATH%
+```
+
+4. Run in cmd prompt.
+```
+build
+```
+
+5. Releases are created in the _dist/_ folder.
+   * embeddable zip file
+   * executable
 
 ---
 
