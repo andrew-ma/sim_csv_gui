@@ -11,9 +11,6 @@ https://github.com/andrew-ma/sim_csv_gui/releases/latest
 ### System Requirements
 * Python 3.7 or later ([Python Installation Steps](python_installation_steps.md))
 
-### Python Package Dependencies:
-* sim_csv_script @ https://github.com/andrew-ma/sim_csv_script/archive/main.zip
-* PyQt5
 
 ### Installation
 ```
