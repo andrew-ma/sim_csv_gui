@@ -692,6 +692,9 @@ class SIM_CSV_GUI:
             imsi_to_pin_dict = None
         elif self.ui.admPinFileRadioButton.isChecked():
             # Make sure that a valid file is selected
+            if self.selected_ADM_PIN_JSON_filename is None:
+                raise Exception("ADM PIN file is empty")
+
             imsi_to_pin_dict = JSONFileArgType(self.selected_ADM_PIN_JSON_filename)
             pin_adm = None
 
