@@ -10,6 +10,8 @@ from PyQt5.QtCore import (
     QAbstractTableModel,
 )
 
+from sim_csv_script.app import check_that_fields_are_valid, check_that_field_is_valid
+
 log = logging.getLogger(__name__)
 
 
@@ -57,6 +59,19 @@ class DataframeTableModel(QAbstractTableModel):
         elif column in self.no_save_editable_column_indexes:
             return False
 
+        # Get a copy of current row
+        current_row_series = self.dataframe.iloc[row].copy(deep=True)
+        # Set FieldValue in copy to new pending value
+        current_row_series["FieldValue"] = value
+        try:
+            # check if new pending value is valid
+            check_that_field_is_valid(
+                current_row_series["FieldName"], current_row_series["FieldValue"]
+            )
+        except Exception as e:
+            log.error(f"({e.__class__.__name__}) {e}")
+            return False
+
         # Update the dataframe with the new value
         self.dataframe.iloc[row, column] = value
         return True
@@ -76,4 +91,3 @@ class DataframeTableModel(QAbstractTableModel):
         self.beginResetModel()
         self.dataframe = pd.DataFrame()
         self.endResetModel()
-
