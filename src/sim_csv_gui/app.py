@@ -2,7 +2,6 @@ import argparse
 import sys
 import logging
 import shlex
-import pandas as pd
 from PyQt5.QtWidgets import (
     QHeaderView,
     QMainWindow,

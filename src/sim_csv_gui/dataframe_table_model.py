@@ -3,6 +3,7 @@ uses Pandas dataframe as the underlying data storage
 and the model can be displayed in a table using tableView.setModel(model)
 """
 import logging
+import pandas as pd
 from PyQt5.QtCore import (
     QVariant,
     Qt,
