@@ -9,23 +9,25 @@ https://github.com/andrew-ma/sim_csv_gui/releases/latest
 ---
 ## Download Python Package (for other OS and platforms)
 ### System Requirements
-* Python 3.7 or later ([Python Installation Steps](python_installation_steps.md))
+* Python 3.6 or later ([Python Installation Steps](python_installation_steps.md))
 
 
 ### Installation
+> _Windows_: substitute `python3` with `python`
 ```
-pip install https://github.com/andrew-ma/sim_csv_gui/archive/main.zip --upgrade --no-cache-dir
-```
-> _Linux_: if you get a "swig: not found" error while running the installation command, first ensure that Python 3.7 or later is installed ('`python3 --version`').  If so, install swig with '`sudo apt install swig`' and retry the installation command.
+# Upgrade pip if using older version of Python
+python3 -m pip install --upgrade pip
 
 
-### Uninstall
+python3 -m pip install --upgrade --no-cache-dir https://github.com/andrew-ma/sim_csv_gui/archive/main.zip
 ```
-pip uninstall sim_csv_gui -y
-```
+> _Linux_: if you get a "swig: not found" error while running the installation command, first ensure that Python 3.6 or later is installed ('`python3 --version`').  If so, install swig with '`sudo apt install swig`' and retry the installation command.
+
+> _Windows_: if you get a "swig.exe" error while running the installation command, you will need to download the swig prebuilt executable (http://www.swig.org/download.html), extract the zip, and add the folder to your PATH.  Then try running the installation again, and if it fails with a "Visual Studio Build Tools" error, then you will need to download https://visualstudio.microsoft.com/visual-cpp-build-tools/, install it, and select the "Desktop development with C++"
+
 
 ---
-### __Graphical User Interface__
+## Commands
 
 Launch GUI
 ```

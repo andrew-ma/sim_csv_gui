@@ -1,51 +1,42 @@
 # Development
 
 ## System Requirements
-* Python 3.7 or later ([Python Installation Steps](python-installation.md))
+* Python 3.6 or later ([Python Installation Steps](python-installation.md))
 
 ## Python Package Dependencies:
 * sim_csv_script @ https://github.com/andrew-ma/sim_csv_script/archive/main.zip
 * PyQt5
 * pyqt5-tools
 
-## Install for Development
+## Installation
+> _Windows_: substitute `python3` with `python`
 ```
 git clone -b main https://github.com/andrew-ma/sim_csv_gui
-cd sim_csv_gui
-pip install -e .
-```
 
-## Uninstall everything including dependencies
-```
-pip uninstall sim_csv_gui -y
-pip uninstall -r requirements.txt -y
-pip uninstall -r requirements_dev.txt -y
+cd sim_csv_gui
+
+python3 -m pip install --upgrade -e .
 ```
 
 ---
 
-## __GUI Development__
-To install Qt Designer
-```
-pip install -r requirements_dev.txt
-```
+## Edit User Interface
 
-To launch Qt Designer to modify the UI
+### Qt Designer - WYSIWYG (what you see is what you get) GUI editor
 ```
+# Install Qt Designer
+python3 -m pip install pyqt5-tools
+
+# Launch Qt Designer
 pyqt5-tools designer
 ```
 
-Then, you can import the .ui file in Qt Designer to modify the GUI.
+* Open .ui files (src/sim_csv_gui/UI) in Qt Designer to load in current user interface
 
-After you modify the Qt Designer .ui file, you can regenerate the python code by running (from the 'sim_csv_gui' folder):
+* After making changes in Qt Designer, regenerate the Python code so the main program can use the modified UI
+
 ```
-# Windows
+# On Windows, run from the 'src/sim_csv_gui' folder
+
 python generate.py --package-name sim_csv_gui --ui-files UI\ui_mainwindow.ui --resource-files resources\resources.qrc
 ```
-
-To launch the GUI while in development, run (from the 'sim_csv_gui' folder)
-```
-python3 ui_mainwindow.py
-```
-
-The entry point for the gui is the main function in sim_csv_gui/app.py.
