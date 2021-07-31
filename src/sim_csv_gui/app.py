@@ -477,13 +477,14 @@ class SIM_CSV_GUI:
             table_df = self.get_table_model_dataframe()
             assert table_df is not None
 
-            log.info("before filtering dataframe")
+            # Only filter the fieldname and fieldvalue columns
+            table_df = table_df[["FieldName", "FieldValue"]]
+
             filtered_df = SIM_CSV_GUI.get_filtered_dataframe_without_added_fields(
                 table_df, filter_command
             )
-            log.info("after filtering dataframe")
 
-            log.info("before checking fields valid")
+            # Check values after filter command are still valid
             check_that_fields_are_valid(filtered_df)
             self.update_table(filtered_df)
 
