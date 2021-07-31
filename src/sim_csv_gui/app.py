@@ -618,9 +618,11 @@ class SIM_CSV_GUI:
 
         df = self.get_table_model_dataframe()
 
-        if self.ui.filterCheckbox.isChecked():
-            filter_command = self.get_filter_command()
-            df = self.get_filtered_dataframe_without_added_fields(df, filter_command)
+        ## If the filter checkbox is checked, automatically run the filter command
+        ## If commented out, then filter command only runs when the Apply button is pressed
+        # if self.ui.filterCheckbox.isChecked():
+        #     filter_command = self.get_filter_command()
+        #     df = self.get_filtered_dataframe_without_added_fields(df, filter_command)
 
         check_that_fields_are_valid(df)
         self.update_table(df)
