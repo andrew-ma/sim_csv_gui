@@ -34,6 +34,11 @@ Launch GUI
 sim_csv_gui
 ```
 
+To list valid field names that can used in CSV file
+```
+sim_csv_script --list-field-names
+```
+
 ---
 
 ## For [Development Documentation](development.md)
