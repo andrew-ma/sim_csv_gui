@@ -24,15 +24,15 @@ from sim_csv_gui.dataframe_table_model import DataframeTableModel
 from sim_csv_gui.dialog_boxes import newMesssageBox, openFileDialog
 from sim_csv_gui.workers import WaitForSIMCardWorker, ReadCardWorker, WriteCardWorker
 
-from sim_csv_script.app import (
+from sim_csv_script import (
     argparse_add_reader_args,
     initialize_card_reader_and_commands,
     get_dataframe_from_csv,
     check_that_fields_are_valid,
-    run_filter_command_on_csv_bytes,
     check_for_added_fields_after_filter,
     JSONFileArgType,
     is_valid_hex,
+    filter_dataframe,
 )
 
 
@@ -54,9 +54,7 @@ def setup_logging_basic_config():
     LOG_FORMAT = "[%(levelname)s] %(message)s, line %(lineno)d, function %(funcName)s"
 
     logging.basicConfig(
-        level=logging.INFO,
-        format=LOG_FORMAT,
-        handlers=[logging.StreamHandler()],
+        level=logging.INFO, format=LOG_FORMAT, handlers=[logging.StreamHandler()],
     )
 
 
@@ -78,7 +76,6 @@ class SIM_CSV_GUI:
         self.selected_CSV_filename = None
         self.selected_ADM_PIN_JSON_filename = None
 
-        self.table_model = None
         self.ascii_table_model = None
 
         self.dry_run = False
@@ -105,8 +102,9 @@ class SIM_CSV_GUI:
         self.look_disabled(self.ui.filterCheckbox)
         self.ui.filterApplyButton.setDisabled(True)
 
-        # Can not show ascii view if no Table model, so disable it
+        # No ascii view if no Table model, so prevent user from checking ascii checkbox
         self.ui.viewAsciiCheckbox.setCheckable(False)
+        self.look_disabled(self.ui.viewAsciiCheckbox)
 
         # table
         self.auto_resize_table()
@@ -261,11 +259,14 @@ class SIM_CSV_GUI:
             # So create a new Model
             self.populate_table_using_dataframe(dataframe)
 
-        # # enable ascii mode
-        # self.ui.viewAsciiCheckbox.setCheckable(True)
-
         # Resize the table to fit the new dataframe
         self.auto_resize_table()
+
+    def get_table_model(self):
+        """If Table View's Model is valid, then return it
+        Otherwise it returns None
+        """
+        return self.ui.tableView.model()
 
     def get_table_model_dataframe(self):
         """If Table View's Model is valid, then return its underlying 'dataframe' attribute
@@ -313,31 +314,19 @@ class SIM_CSV_GUI:
         return filter_command
 
     @staticmethod
-    def filter_dataframe(df, filter_command):
-        """This takes in an existing dataframe and runs it through the filter command
-        It then returns a new dataframe object
-        It also checks for any newly added fields
-
-        Args:
-            df ([type]): [description]
-            filter_command ([type]): [description]
-
-        Returns:
-            [type]: [description]
+    def get_filtered_dataframe_without_added_fields(df, filter_command):
+        """Filter the dataframe, and check that no extra fields have been added
         """
         previous_field_names = df["FieldName"].to_list()
 
-        # Convert dataframe to bytes
-        df_bytes = df.to_csv().encode()
+        filtered_df = filter_dataframe(df, filter_command)
 
-        df = run_filter_command_on_csv_bytes(df_bytes, filter_command)
-
-        after_filter_field_names = df["FieldName"].to_list()
+        after_filter_field_names = filtered_df["FieldName"].to_list()
         check_for_added_fields_after_filter(
             previous_field_names, after_filter_field_names
         )
 
-        return df
+        return filtered_df
 
     ########################################
     ############ SIGNALS & SLOTS ###########
@@ -364,6 +353,9 @@ class SIM_CSV_GUI:
         self.ui.admPinFileChooseFileButton.clicked.connect(
             self.on_admPinFileChooseFileButton_clicked
         )
+
+        # Reset Table Button
+        self.ui.resetTableButton.clicked.connect(self.on_resetTableButton_clicked)
 
         # Filter
         self.ui.filterCheckbox.stateChanged.connect(self.on_filterCheckbox_stateChanged)
@@ -395,17 +387,27 @@ class SIM_CSV_GUI:
                 # if fields in CSV are valid, then display dataframe in Table
                 self.update_table(df)
 
+                # this selected_CSV_filename variable is used by many slot functions to check if there is a CSV file
                 self.selected_CSV_filename = csv_filename
+
+                # Allow user to check ascii checkbox, since we have a table model
+                self.ui.viewAsciiCheckbox.setCheckable(True)
+                self.look_normal(self.ui.viewAsciiCheckbox)
             except Exception as e:
                 # clear the label
                 self.ui.dataFilenameLabel.setText("No file selected")
+
+                # this selected_CSV_filename variable is used by many slot functions to check if there is a CSV file
                 self.selected_CSV_filename = None
 
-                # Remove table from view
-                if self.table_model:
-                    self.table_model.clear()
-                else:
-                    self.table_model = None
+                # Remove existing table
+                table_model = self.get_table_model()
+                if table_model is not None:
+                    table_model.clear()
+
+                # No ascii view if no Table model, so prevent user from checking ascii checkbox
+                self.ui.viewAsciiCheckbox.setCheckable(False)
+                self.look_disabled(self.ui.viewAsciiCheckbox)
 
                 log.error(e)
                 self.openErrorDialog(e.__class__.__name__, informative_text=str(e))
@@ -448,6 +450,15 @@ class SIM_CSV_GUI:
                 admPin = admPin[2:]
             self.ui.admPinLineEdit.setText(admPin)
 
+    def on_resetTableButton_clicked(self):
+        if self.selected_CSV_filename:
+            # Parse the CSV file again
+            # replacing any manual edits, or filter command
+            new_df = get_dataframe_from_csv(self.selected_CSV_filename)
+
+            check_that_fields_are_valid(new_df)
+            self.update_table(new_df)
+
     def on_filterCheckbox_stateChanged(self, state: int):
         log.debug("on_filterCheckbox_stateChanged()")
 
@@ -461,15 +472,11 @@ class SIM_CSV_GUI:
             self.look_disabled(self.ui.filterCheckbox)
             self.ui.filterApplyButton.setEnabled(False)
 
-            #     # TODO:
-            # # return the Table to unfiltered form
-            # if self.selected_CSV_filename:
-            #     # df = get_dataframe_from_csv(self.selected_CSV_filename)
-            #     table_df = self.get_table_model_dataframe()
-
-            #     self.update_table(df)
-
     def on_filterApplyButton_clicked(self):
+        """Clicking the Apply Filter Button
+        will filter the table model's underlying dataframe
+
+        """
         log.debug("on_filterApplyButton_clicked()")
 
         try:
@@ -477,13 +484,19 @@ class SIM_CSV_GUI:
                 raise Exception("Requires CSV file")
 
             filter_command = self.get_filter_command()
-            # df = get_filtered_dataframe(self.selected_CSV_filename, filter_command)
-            # TODO: only get new dataframe if it is empty
-            table_df = self.get_table_model_dataframe()
-            df = self.filter_dataframe(table_df, filter_command)
 
-            check_that_fields_are_valid(df)
-            self.update_table(df)
+            table_df = self.get_table_model_dataframe()
+            assert table_df is not None
+
+            log.info("before filtering dataframe")
+            filtered_df = SIM_CSV_GUI.get_filtered_dataframe_without_added_fields(
+                table_df, filter_command
+            )
+            log.info("after filtering dataframe")
+
+            log.info("before checking fields valid")
+            check_that_fields_are_valid(filtered_df)
+            self.update_table(filtered_df)
 
         except Exception as e:
             log.error(e)
@@ -494,29 +507,34 @@ class SIM_CSV_GUI:
 
         if state == Qt.Checked:
 
-            ascii_df = self.table_model.getDataframe()
+            # # TODO:
+            # ascii_df = self.get_table_model_dataframe()
 
-            # Convert values in columns to ascii
-            ascii_df["FieldValue"] = ascii_df["FieldValue"].apply(
-                lambda value: bytes.fromhex(value).decode("ascii", errors="replace")
-            )
+            # # Convert values in columns to ascii
+            # ascii_df["FieldValue"] = ascii_df["FieldValue"].apply(
+            #     lambda value: bytes.fromhex(value).decode("ascii", errors="replace")
+            # )
 
-            try:
-                ascii_df["Value On Card"] = ascii_df["Value On Card"].apply(
-                    lambda value: bytes.fromhex(value).decode("ascii", errors="replace")
-                )
-            except KeyError:
-                # KeyError if we haven't read card values yet, and 'Value On Card' column has not been created
-                pass
+            # try:
+            #     ascii_df["Value On Card"] = ascii_df["Value On Card"].apply(
+            #         lambda value: bytes.fromhex(value).decode("ascii", errors="replace")
+            #     )
+            # except KeyError:
+            #     # KeyError if we haven't read card values yet, and 'Value On Card' column has not been created
+            #     pass
 
-            self.update_ascii_table(ascii_df)
+            # self.update_ascii_table(ascii_df)
 
-            # Show ascii model in table view
-            self.ui.tableView.setModel(self.ascii_table_model)
+            # # Show ascii model in table view
+            # self.ui.tableView.setModel(self.ascii_table_model)
 
+            pass
         elif state == Qt.Unchecked:
-            # Show actual model in table view
-            self.ui.tableView.setModel(self.table_model)
+            # # Show actual model in table view
+            # # self.ui.tableView.setModel(self.table_model)
+            # table_model = self.get_table_model()
+            # self.ui.tableView.setModel(table_model)
+            pass
 
     def on_readButton_clicked(self):
         log.debug("on_readButton_clicked()")
@@ -539,7 +557,6 @@ class SIM_CSV_GUI:
     ########################################
     ########### DIALOG BOXES ###############
     ########################################
-
 
     def save_dialog_position(self, dialog):
         self.settings.setValue("last_pos", dialog.pos())
@@ -599,17 +616,11 @@ class SIM_CSV_GUI:
         if self.selected_CSV_filename is None:
             raise Exception("CSV File is Required")
 
-        table_df = self.get_table_model_dataframe()
+        df = self.get_table_model_dataframe()
 
         if self.ui.filterCheckbox.isChecked():
             filter_command = self.get_filter_command()
-            df = self.filter_dataframe(table_df, filter_command)
-        else:
-            # NO FILTER
-            # Only Create New Dataframe From CSV file if Table View does not have a Model
-            # TODO:
-            # df = get_dataframe_from_csv(self.selected_CSV_filename)
-            df = table_df
+            df = self.get_filtered_dataframe_without_added_fields(df, filter_command)
 
         check_that_fields_are_valid(df)
         self.update_table(df)
