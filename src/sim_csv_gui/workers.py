@@ -103,7 +103,8 @@ class ReadCardWorker(QObject):
             axis=1,
         )
 
-        differences = self._df["FieldValue"] != self._df["Value On Card"]
+        # Create a "Diff" column with differences (case insensitive) between what we passed in, and what we read on card after writing
+        differences = self._df["FieldValue"].str.lower() != self._df["Value On Card"].str.lower()
         self._df["Diff"] = differences.apply(lambda b: "X" if b else "")
 
         self.finished.emit(self._finish_code, self._df)
@@ -200,8 +201,8 @@ class WriteCardWorker(QObject):
             axis=1,
         )
 
-        # Update the "Diff" column with differences between what we passed in, and what we read on card after writing
-        differences = self._df["FieldValue"] != self._df["Value On Card"]
+        # Create a "Diff" column with differences (case insensitive) between what we passed in, and what we read on card after writing
+        differences = self._df["FieldValue"].str.lower() != self._df["Value On Card"].str.lower()
         self._df["Diff"] = differences.apply(lambda b: "X" if b else "")
 
         self.finished.emit(self._finish_code, self._df)
