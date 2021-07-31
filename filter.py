@@ -58,8 +58,10 @@ def main():
     #############################################################
     #####################  Modify CSV here ######################
 
-    # Modify SPN Value to change last 2 characters to arg1 reversed
-    csv_dict["SPN"]["FieldValue"] = f'{csv_dict["SPN"]["FieldValue"][:-2]}{arg1[::-1]}'
+    # Modify SPN Value first 2 characters to be arg1
+    old_value = csv_dict["SPN"]["FieldValue"]
+    new_value = arg1 + old_value[2:]
+    csv_dict["SPN"]["FieldValue"] = new_value
 
     #############################################################
 

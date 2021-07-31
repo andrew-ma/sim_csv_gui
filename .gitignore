@@ -11,3 +11,4 @@ venv/
 *.spec
 .eggs/
 upx-*/
+*.csv
