@@ -65,9 +65,6 @@ def main():
 
     #############################################################
 
-    # Find invalid fields
-    check_csv_dict(csv_dict)
-
     # Convert CSV dictionary to string
     output_csv_string = get_str_from_csv_dict(csv_dict)
 
