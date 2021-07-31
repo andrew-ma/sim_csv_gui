@@ -99,11 +99,6 @@ class SIM_CSV_GUI:
         self.ui.admPinFileInpuContainer.setDisabled(True)
         self.look_disabled(self.ui.admPinFileRadioButton)
 
-        # filter command is disabled
-        self.ui.filterCommandLineEdit.setDisabled(True)
-        self.look_disabled(self.ui.filterCheckbox)
-        self.ui.filterApplyButton.setDisabled(True)
-
         # No ascii view if no Table model, so prevent user from checking ascii checkbox
         self.ui.viewAsciiCheckbox.setCheckable(False)
         self.look_disabled(self.ui.viewAsciiCheckbox)
@@ -290,8 +285,6 @@ class SIM_CSV_GUI:
 
     def get_filter_command(self):
         """Read the filter command from the filter text box"""
-        assert self.ui.filterCheckbox.isChecked()
-
         filter_text = self.ui.filterCommandLineEdit.text().strip()
 
         if not filter_text:
@@ -347,7 +340,6 @@ class SIM_CSV_GUI:
         self.ui.resetTableButton.clicked.connect(self.on_resetTableButton_clicked)
 
         # Filter
-        self.ui.filterCheckbox.stateChanged.connect(self.on_filterCheckbox_stateChanged)
         self.ui.filterApplyButton.clicked.connect(self.on_filterApplyButton_clicked)
 
         # READ/WRITE BUTTONS
@@ -360,8 +352,6 @@ class SIM_CSV_GUI:
         )
 
     def on_dataChooseFileButton_clicked(self):
-        log.debug("on_dataChooseFileButton_clicked()")
-
         csv_filename = openFileDialog("*.csv")
         if csv_filename is not None:
             # update the label
@@ -402,7 +392,6 @@ class SIM_CSV_GUI:
                 self.openErrorDialog(e.__class__.__name__, informative_text=str(e))
 
     def on_admPinFileRadioButton_toggled(self, checked: bool):
-        log.debug("on_admPinFileRadioButton_toggled()")
         if checked:
             self.ui.admPinFileInpuContainer.setDisabled(False)
             self.look_normal(self.ui.admPinFileRadioButton)
@@ -411,7 +400,6 @@ class SIM_CSV_GUI:
             self.look_disabled(self.ui.admPinFileRadioButton)
 
     def on_admPinRadioButton_toggled(self, checked: bool):
-        log.debug("on_admPinRadioButton_toggled()")
         if checked:
             self.ui.admPinInputContainer.setDisabled(False)
             self.look_normal(self.ui.admPinRadioButton)
@@ -420,7 +408,6 @@ class SIM_CSV_GUI:
             self.look_disabled(self.ui.admPinRadioButton)
 
     def on_admPinFileChooseFileButton_clicked(self):
-        log.debug("on_admPinFileChooseFileButton_clicked()")
         json_filename = openFileDialog("*.json")
         if json_filename is not None:
             self.ui.admPinFileFilenameLabel.setText(json_filename)
@@ -428,8 +415,6 @@ class SIM_CSV_GUI:
             self.selected_ADM_PIN_JSON_filename = json_filename
 
     def on_admPinHexadecimalCheckbox_stateChanged(self, state: int):
-        log.debug("on_admPinHexadecimalCheckbox_stateChanged()")
-
         admPin = self.ui.admPinLineEdit.text()
         if state == Qt.Checked:
             # prepend '0x' to the current value in input field
@@ -448,26 +433,11 @@ class SIM_CSV_GUI:
             check_that_fields_are_valid(new_df)
             self.update_table(new_df)
 
-    def on_filterCheckbox_stateChanged(self, state: int):
-        log.debug("on_filterCheckbox_stateChanged()")
-
-        if state == Qt.Checked:
-            self.ui.filterCommandLineEdit.setEnabled(True)
-            self.look_normal(self.ui.filterCheckbox)
-            self.ui.filterApplyButton.setEnabled(True)
-        elif state == Qt.Unchecked:
-            # Disable the text edit
-            self.ui.filterCommandLineEdit.setEnabled(False)
-            self.look_disabled(self.ui.filterCheckbox)
-            self.ui.filterApplyButton.setEnabled(False)
-
     def on_filterApplyButton_clicked(self):
         """Clicking the Apply Filter Button
         will filter the table model's underlying dataframe
 
         """
-        log.debug("on_filterApplyButton_clicked()")
-
         try:
             if not self.selected_CSV_filename:
                 raise Exception("Requires CSV file")
@@ -493,8 +463,6 @@ class SIM_CSV_GUI:
             self.openErrorDialog(e.__class__.__name__, informative_text=str(e))
 
     def on_viewAsciiCheckbox_stateChanged(self, state: int):
-        log.debug("on_viewAsciiCheckbox_stateChanged()")
-
         if state == Qt.Checked:
             # Show Ascii values for "FieldValue" and "Value On Card" columns
             self.ui.tableView.setItemDelegateForColumn(1, self._ascii_delegate)
@@ -505,11 +473,9 @@ class SIM_CSV_GUI:
             self.ui.tableView.setItemDelegateForColumn(2, self._default_delegate)
 
     def on_readButton_clicked(self):
-        log.debug("on_readButton_clicked()")
         self.read_mode()
 
     def on_writeButton_clicked(self):
-        log.debug("on_writeButton_clicked()")
         self.write_mode()
 
     def set_progress_bar_value(self, value):
@@ -585,12 +551,6 @@ class SIM_CSV_GUI:
             raise Exception("CSV File is Required")
 
         df = self.get_table_model_dataframe()
-
-        ## If the filter checkbox is checked, automatically run the filter command
-        ## If commented out, then filter command only runs when the Apply button is pressed
-        # if self.ui.filterCheckbox.isChecked():
-        #     filter_command = self.get_filter_command()
-        #     df = self.get_filtered_dataframe_without_added_fields(df, filter_command)
 
         check_that_fields_are_valid(df)
         self.update_table(df)

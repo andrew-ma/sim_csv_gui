@@ -331,20 +331,12 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QCheckBox" name="filterCheckbox">
+        <widget class="QLabel" name="filterLabel">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-         <property name="cursor">
-          <cursorShape>ArrowCursor</cursorShape>
          </property>
          <property name="text">
           <string>Filter Command</string>
