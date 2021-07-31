@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 
 from sim_csv_gui.ui_mainwindow import Ui_MainWindow
 from sim_csv_gui.temp_settings import TempSettings
+from sim_csv_gui.ascii_styled_item_delegate import AsciiStyledItemDelegate
 from sim_csv_gui.dataframe_table_model import DataframeTableModel
 from sim_csv_gui.dialog_boxes import newMesssageBox, openFileDialog
 from sim_csv_gui.workers import WaitForSIMCardWorker, ReadCardWorker, WriteCardWorker
@@ -76,7 +77,8 @@ class SIM_CSV_GUI:
         self.selected_CSV_filename = None
         self.selected_ADM_PIN_JSON_filename = None
 
-        self.ascii_table_model = None
+        self._default_delegate = self.ui.tableView.itemDelegate()
+        self._ascii_delegate = AsciiStyledItemDelegate(self.app.style())
 
         self.dry_run = False
 
@@ -182,14 +184,12 @@ class SIM_CSV_GUI:
         self.ui.writeGroup.setDisabled(True)
         self.ui.filterGroup.setDisabled(True)
         self.ui.readWriteGroup.setDisabled(True)
-        self.ui.viewAsciiCheckbox.setDisabled(True)
 
     def enable_input_elements(self):
         self.ui.dataGroup.setDisabled(False)
         self.ui.writeGroup.setDisabled(False)
         self.ui.filterGroup.setDisabled(False)
         self.ui.readWriteGroup.setDisabled(False)
-        self.ui.viewAsciiCheckbox.setDisabled(False)
 
     def setup_progress_bar(self):
         self.ui.readWriteProgressBar.reset()
@@ -230,17 +230,6 @@ class SIM_CSV_GUI:
 
         for i in range(num_sections):
             self.ui.tableView.horizontalHeader().resizeSection(i, section_sizes[i])
-
-    def update_ascii_table(self, dataframe):
-        # # update the ASCII Table Model
-        # if self.ascii_table_model:
-        #     self.ascii_table_model = self.ascii_table_model.updateModel(dataframe)
-        # else:
-        #     self.ascii_table_model = self.populate_table_using_dataframe(dataframe)
-
-        # self.auto_resize_table()
-        # TODO:
-        pass
 
     def update_table(self, dataframe):
         """Create a new DataframeTableModel if one does not currently exist
@@ -506,35 +495,13 @@ class SIM_CSV_GUI:
         log.debug("on_viewAsciiCheckbox_stateChanged()")
 
         if state == Qt.Checked:
-
-            # # TODO:
-            # ascii_df = self.get_table_model_dataframe()
-
-            # # Convert values in columns to ascii
-            # ascii_df["FieldValue"] = ascii_df["FieldValue"].apply(
-            #     lambda value: bytes.fromhex(value).decode("ascii", errors="replace")
-            # )
-
-            # try:
-            #     ascii_df["Value On Card"] = ascii_df["Value On Card"].apply(
-            #         lambda value: bytes.fromhex(value).decode("ascii", errors="replace")
-            #     )
-            # except KeyError:
-            #     # KeyError if we haven't read card values yet, and 'Value On Card' column has not been created
-            #     pass
-
-            # self.update_ascii_table(ascii_df)
-
-            # # Show ascii model in table view
-            # self.ui.tableView.setModel(self.ascii_table_model)
-
-            pass
+            # Show Ascii values for "FieldValue" and "Value On Card" columns
+            self.ui.tableView.setItemDelegateForColumn(1, self._ascii_delegate)
+            self.ui.tableView.setItemDelegateForColumn(2, self._ascii_delegate)
         elif state == Qt.Unchecked:
-            # # Show actual model in table view
-            # # self.ui.tableView.setModel(self.table_model)
-            # table_model = self.get_table_model()
-            # self.ui.tableView.setModel(table_model)
-            pass
+            # Show Default (hex) values for "FieldValue" and "Value On Card" columns
+            self.ui.tableView.setItemDelegateForColumn(1, self._default_delegate)
+            self.ui.tableView.setItemDelegateForColumn(2, self._default_delegate)
 
     def on_readButton_clicked(self):
         log.debug("on_readButton_clicked()")
@@ -710,9 +677,6 @@ class SIM_CSV_GUI:
     ########################################
 
     def read_mode(self):
-        # Don't show ascii table
-        self.ui.viewAsciiCheckbox.setChecked(False)
-
         def read_callback(dataframe, scc, sl):
             self.read_card(dataframe=dataframe, scc=scc, sl=sl)
 
@@ -796,9 +760,6 @@ class SIM_CSV_GUI:
         read_card_thread.start()
 
     def write_mode(self):
-        # Don't show ascii table
-        self.ui.viewAsciiCheckbox.setChecked(False)
-
         try:
             pin_adm, imsi_to_pin_dict = self.get_adm_pin_from_input_fields()
 
@@ -808,13 +769,8 @@ class SIM_CSV_GUI:
 
                     self.disable_input_elements()
 
-                    # Enable showing ascii table on ask to write dialog
-                    self.ui.viewAsciiCheckbox.setDisabled(False)
-
                     def __accept_ask_write_callback():
                         log.debug("Writing SIM Card")
-                        # If user accepts write values dialog, show hex values
-                        self.ui.viewAsciiCheckbox.setChecked(False)
 
                         self.write_card(
                             dataframe,
