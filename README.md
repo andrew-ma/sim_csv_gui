@@ -18,8 +18,9 @@ https://github.com/andrew-ma/sim_csv_gui/releases/latest
 # Upgrade pip if using older version of Python
 python3 -m pip install --upgrade pip
 
-
-python3 -m pip install --upgrade --no-cache-dir https://github.com/andrew-ma/sim_csv_gui/archive/main.zip
+git clone https://github.com/andrew-ma/sim_csv_gui
+cd sim_csv_gui
+python3 -m pip install .
 ```
 > _Linux_: if you get a "swig: not found" error while running the installation command, first ensure that Python 3.6 or later is installed ('`python3 --version`').  If so, install swig with '`sudo apt install swig`' and retry the installation command.
 
