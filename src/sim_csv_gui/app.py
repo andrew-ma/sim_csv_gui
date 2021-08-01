@@ -528,6 +528,11 @@ class SIM_CSV_GUI:
             **kwargs,
         )
 
+        self.restore_dialog_position(modal_msg_box)
+        modal_msg_box.finished.connect(
+            lambda: self.save_dialog_position(modal_msg_box)
+        )
+
         # Save to instance variables, so other methods can close box
         self.modal_msg_box = modal_msg_box
 
