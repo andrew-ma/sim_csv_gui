@@ -1,10 +1,5 @@
 @echo off
-if defined MY_PYTHON (
-    echo MY_PYTHON=%MY_PYTHON%
-) else (
-    echo MY_PYTHON environment variable is not defined
-    exit /b
-)
+set "MY_PYTHON=python"
 
 if defined UPX_PATH (
     echo UPX_PATH=%UPX_PATH%
@@ -20,13 +15,17 @@ if defined APP_NAME (
     exit /b
 )
 
+:: Delete folders
+call ..\helper_scripts\delete_folders.bat build dist venv
+
 :: Create new venv
-call clean_env.bat
+call ..\helper_scripts\clean_env.bat
 
 %MY_PYTHON% -m pip install --upgrade pip
+%MY_PYTHON% -m pip install wheel setuptools
+%MY_PYTHON% -m pip install -r ..\requirements.txt
+%MY_PYTHON% -m pip install https://github.com/pyinstaller/pyinstaller/archive/develop.zip
 
-:: Install pip requirements
-call install_requirements.bat
 
 :: Run Pyinstaller to generate executable and embeddable zip folder
 call run_pyinstaller.bat
@@ -36,6 +35,9 @@ call run_pyinstaller.bat
 
 :: Zip the Folder
 :: cd dist && tar.exe -a -c -f %APP_NAME%.zip %APP_NAME%
+
+:: Delete folders except for dist
+call ..\helper_scripts\delete_folders.bat build
 
 echo Done!
 

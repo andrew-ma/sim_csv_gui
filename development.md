@@ -57,4 +57,4 @@ python generate.py --package-name sim_csv_gui --ui-files UI\ui_mainwindow.ui --r
 ---
 
 ## Build Executable Steps (Windows)
-View [Building Executable Documentation](build_executable/build_executable_steps.md)
+View [Building Executable Documentation](build_executable_steps.md)
