@@ -411,7 +411,7 @@
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">color: red</string>
+            <string notr="true">:enabled {color: red }</string>
            </property>
            <property name="text">
             <string>Reset</string>

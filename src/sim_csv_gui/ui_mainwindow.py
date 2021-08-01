@@ -228,7 +228,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(9)
         self.resetTableButton.setFont(font)
-        self.resetTableButton.setStyleSheet("color: red")
+        self.resetTableButton.setStyleSheet(":enabled {color: red }")
         self.resetTableButton.setObjectName("resetTableButton")
         self.horizontalLayout_4.addWidget(self.resetTableButton)
         self.imsiContainer = QtWidgets.QFrame(self.tableGroup)
