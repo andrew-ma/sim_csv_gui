@@ -22,6 +22,7 @@ class DataframeTableModel(QAbstractTableModel):
         self.dataframe = dataframe
         self.editable_column_indexes = (1, 2)
         self.no_save_editable_column_indexes = (2,)
+        self._allow_setting_data = True
 
     def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
         return len(self.dataframe.index)
@@ -51,11 +52,17 @@ class DataframeTableModel(QAbstractTableModel):
         else:
             return Qt.ItemIsEnabled
 
+    def allow_setting_data(self, allow: bool = True):
+        self._allow_setting_data = allow
+
     def setData(self, index, value, role=Qt.EditRole):
         row = index.row()
         column = index.column()
         current_value = self.dataframe.iloc[row, column]
-        if current_value == value:
+
+        if not self._allow_setting_data:
+            return False
+        elif current_value == value:
             return False
         elif column in self.no_save_editable_column_indexes:
             return False

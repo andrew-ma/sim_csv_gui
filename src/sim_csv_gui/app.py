@@ -179,12 +179,24 @@ class SIM_CSV_GUI:
         self.ui.writeGroup.setDisabled(True)
         self.ui.filterGroup.setDisabled(True)
         self.ui.readWriteGroup.setDisabled(True)
+        self.ui.resetTableButton.setDisabled(True)
+
+        # Prevent setting data in table model
+        table_model = self.get_table_model()
+        if table_model is not None:
+            table_model.allow_setting_data(False)
 
     def enable_input_elements(self):
         self.ui.dataGroup.setDisabled(False)
         self.ui.writeGroup.setDisabled(False)
         self.ui.filterGroup.setDisabled(False)
         self.ui.readWriteGroup.setDisabled(False)
+        self.ui.resetTableButton.setDisabled(False)
+
+        # Allow setting data in table model
+        table_model = self.get_table_model()
+        if table_model is not None:
+            table_model.allow_setting_data(True)
 
     def setup_progress_bar(self):
         self.ui.readWriteProgressBar.reset()
@@ -643,6 +655,9 @@ class SIM_CSV_GUI:
     ########################################
 
     def read_mode(self):
+        # Reset Progress Bar
+        self.set_progress_bar_value(0)
+
         def read_callback(dataframe, scc, sl):
             self.read_card(dataframe=dataframe, scc=scc, sl=sl)
 
@@ -726,12 +741,18 @@ class SIM_CSV_GUI:
         read_card_thread.start()
 
     def write_mode(self):
+        # Reset Progress Bar
+        self.set_progress_bar_value(0)
+
         try:
             pin_adm, imsi_to_pin_dict = self.get_adm_pin_from_input_fields()
 
             def read_then_write_callback(dataframe, scc, sl):
                 def ask_user_if_write_callback(*args, **kwargs):
                     # finished reading successfully
+
+                    # Reset Progress Bar
+                    self.set_progress_bar_value(0)
 
                     self.disable_input_elements()
 
