@@ -12,3 +12,4 @@ venv/
 .eggs/
 upx-*/
 *.csv
+!spn_tmobile.csv
