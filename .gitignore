@@ -13,3 +13,4 @@ venv/
 upx-*/
 *.csv
 !spn_tmobile.csv
+.pypirc
