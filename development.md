@@ -9,13 +9,18 @@
 * pyqt5-tools
 
 ## Installation
-> _Windows_: substitute `python3` with `python`
+Windows
 ```
 git clone -b main https://github.com/andrew-ma/sim_csv_gui
-
 cd sim_csv_gui
+python -m pip install --upgrade --no-cache-dir -e .
+```
 
-python3 -m pip install --upgrade -e .
+Linux
+```
+git clone -b main https://github.com/andrew-ma/sim_csv_gui
+cd sim_csv_gui
+python3 -m pip install --upgrade --no-cache-dir -e .
 ```
 
 ---
@@ -23,11 +28,20 @@ python3 -m pip install --upgrade -e .
 ## Edit User Interface
 
 ### Qt Designer - WYSIWYG (what you see is what you get) GUI editor
-```
-# Install Qt Designer
-python3 -m pip install pyqt5-tools
 
-# Launch Qt Designer
+#### Install Qt Designer
+Windows
+```
+python -m pip install pyqt5-tools
+```
+
+Linux
+```
+python3 -m pip install pyqt5-tools
+```
+
+#### Launch Qt Designer
+```
 pyqt5-tools designer
 ```
 
@@ -40,3 +54,7 @@ pyqt5-tools designer
 
 python generate.py --package-name sim_csv_gui --ui-files UI\ui_mainwindow.ui --resource-files resources\resources.qrc
 ```
+---
+
+## Build Executable Steps (Windows)
+View [Building Executable Documentation](build_executable/build_executable_steps.md)
