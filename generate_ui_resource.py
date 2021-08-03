@@ -6,17 +6,22 @@ import logging
 import argparse
 
 log = logging.getLogger(__name__)
+# ERROR_FORMAT = '{%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
 logging.basicConfig(level=logging.INFO)
 
 
-def get_resource_py_filename(filename):
+def get_resource_py_filename(filename, output_dir):
     # Gets basename, Removes .ui extension, Adds '_rc' suffix, Adds .py extension
-    return os.path.splitext(os.path.basename(filename))[0] + "_rc.py"
+    return os.path.join(
+        output_dir, os.path.splitext(os.path.basename(filename))[0] + "_rc.py"
+    )
 
 
-def get_ui_py_filename(filename):
+def get_ui_py_filename(filename, output_dir):
     # Gets basename, Removes .ui extension, Adds .py extension
-    return os.path.splitext(os.path.basename(filename))[0] + ".py"
+    return os.path.join(
+        output_dir, os.path.splitext(os.path.basename(filename))[0] + ".py"
+    )
 
 
 def convert_ui_file_to_python(ui_file_path, ui_python_file_path):
@@ -42,7 +47,9 @@ def convert_resource_file_to_python(resource_file_path, resource_python_file_pat
     return subprocess.run(resource_to_py_command)
 
 
-def prefix_ui_python_file_resource_imports(ui_python_file_path, package_name):
+def prefix_ui_python_file_resource_imports(
+    ui_python_file_path, package_name, resources_output_dir
+):
     # Prefix the Resource file imports in UI_PYTHON_FILE_PATH with the current Python Package
     import_resource_pattern = re.compile(r"(import\s)(.*[_]rc)")
 
@@ -51,7 +58,7 @@ def prefix_ui_python_file_resource_imports(ui_python_file_path, package_name):
         found_matches = import_resource_pattern.findall(contents)
         resource_module_names = [x[1] for x in found_matches]
         for r in resource_module_names:
-            if not os.path.exists(r + ".py"):
+            if not os.path.exists(os.path.join(resources_output_dir, r + ".py")):
                 # try to generate this resource file
                 raise Exception(
                     f"UI python file '{ui_python_file_path}' depends on missing resource file '{r}.py'"
@@ -105,6 +112,15 @@ def ResourceFileArgType(filename):
     return filename
 
 
+def OutputDirectoryArgType(directory):
+    if not os.path.isdir(directory):
+        raise argparse.ArgumentTypeError(
+            f"Output directory '{directory}' does not exist"
+        )
+
+    return directory
+
+
 def get_args():
     parser = argparse.ArgumentParser(
         # prog="pySim-read",
@@ -115,8 +131,7 @@ def get_args():
     required_group = parser.add_argument_group("required arguments")
 
     required_group.add_argument(
-        "--package-name",
-        required=True,
+        "--package-name", required=True,
     )
 
     required_group.add_argument(
@@ -125,6 +140,13 @@ def get_args():
 
     parser.add_argument(
         "--resource-files", nargs="+", default=[], type=ResourceFileArgType
+    )
+
+    parser.add_argument(
+        "--output-dir",
+        type=OutputDirectoryArgType,
+        required=True,
+        help="Directory where UI and resource Python files will be generated",
     )
 
     args = parser.parse_args()
@@ -145,22 +167,32 @@ def main():
     # RESOURCE_FILE_PATHS = [os.path.join("resources", "resources.qrc")]
     RESOURCE_FILE_PATHS = args.resource_files
 
+    OUTPUT_DIR = args.output_dir
+
     # PACKAGE_NAME = "sim_csv_gui"
     PACKAGE_NAME = args.package_name
     log.info(f"GUI Package Name: '{PACKAGE_NAME}'")
 
     for res_file in RESOURCE_FILE_PATHS:
-        res_py_file = get_resource_py_filename(res_file)
+        res_py_file = get_resource_py_filename(res_file, OUTPUT_DIR)
         log.info(f"Converting Resource: '{res_file}' => '{res_py_file}'")
-        convert_resource_file_to_python(res_file, res_py_file)
+        try:
+            convert_resource_file_to_python(res_file, res_py_file)
+        except FileNotFoundError:
+            log.error(f"'pyuic5' command is not found. Install with 'python -m pip install pyqt5-tools'")
+            sys.exit(1)
 
     for ui_file in UI_FILE_PATHS:
-        ui_py_file = get_ui_py_filename(ui_file)
+        ui_py_file = get_ui_py_filename(ui_file, OUTPUT_DIR)
         log.info(f"Converting UI: '{ui_file}' => '{ui_py_file}'")
-        convert_ui_file_to_python(ui_file, ui_py_file)
+        try:
+            convert_ui_file_to_python(ui_file, ui_py_file)
+        except FileNotFoundError:
+            log.error(f"'pyuic5' command is not found. Install with 'python -m pip install pyqt5-tools'")
+            sys.exit(1)
 
         log.info(f"Adding package prefix to resource imports in '{ui_py_file}'")
-        prefix_ui_python_file_resource_imports(ui_py_file, PACKAGE_NAME)
+        prefix_ui_python_file_resource_imports(ui_py_file, PACKAGE_NAME, OUTPUT_DIR)
 
     return 0
 
@@ -169,5 +201,5 @@ if __name__ == "__main__":
     try:
         sys.exit(main())
     except Exception as e:
-        log.error(e)
+        log.exception(e)
         sys.exit(1)
