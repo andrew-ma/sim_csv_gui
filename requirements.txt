@@ -1,2 +1,2 @@
-sim_csv_script @ https://github.com/andrew-ma/sim_csv_script/archive/main.zip
+sim_csv_script
 PyQt5
