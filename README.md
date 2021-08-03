@@ -1,54 +1,44 @@
 # SIM CSV GUI
-Powered by sim_csv_script
-GUI to read and write SIM cards.
-Fields and values are specified in a CSV file, and optionally a filter script can be supplied for dynamically changing the CSV contents for each card.
+GUI desktop application for reading and writing SIM cards values.
 
-## Download Prebuilt Binaries
-https://github.com/andrew-ma/sim_csv_gui/releases/latest
+* For reading and writing values, import a CSV file with `FieldName,FieldValue` columns
 
----
-## Download Python Package
-### System Requirements
-* Python 3.6 or later ([Python Installation Steps](python_installation_steps.md))
+* For writing values, import a JSON file with `{"IMSI": "ADM PIN"}` (ADM PINs are treated as ASCII unless prefixed with "0x" for hexadecimal)
+
+* Values are editable in table, and they can be displayed as ASCII characters 
+
+* An external filter program that receives a CSV valid string  through STDIN, modifies field values, and outputs the modified CSV string through STDOUT can be supplied
 
 
-### Installation
-#### Method #1
+## Installation
+### Method #1: Source Distribution (`.tar.gz` file)
 Windows
 ```
-set PBR_VERSION=3.0.0
-set SKIP_GENERATE_AUTHORS=1
-set SKIP_WRITE_GIT_CHANGELOG=1
-
-python -m pip install --upgrade --no-cache-dir https://github.com/andrew-ma/sim_csv_gui/archive/main.zip
+python -m pip install --upgrade {sim_csv_script-VERSION.tar.gz}
 ```
 
 Linux
 ```
-export PBR_VERSION=3.0.0
-export SKIP_GENERATE_AUTHORS=1
-export SKIP_WRITE_GIT_CHANGELOG=1
-
-python3 -m pip install --upgrade --no-cache-dir https://github.com/andrew-ma/sim_csv_gui/archive/main.zip
+python3 -m pip install --upgrade {sim_csv_script-VERSION.tar.gz}
 ```
 
-#### Method #2
+### Method #2: Source Code
+* First, change into the directory that contains *`setup.py`* or *`setup.cfg`* file
+
 Windows
 ```
-git clone https://github.com/andrew-ma/sim_csv_gui
-cd sim_csv_gui
-python -m pip install --upgrade --no-cache-dir .
+python -m pip install --upgrade -e .
 ```
+
+> _Windows_: if you get a "swig.exe" error while running the installation command, you will need to download the swig prebuilt executable (http://www.swig.org/download.html), extract the zip, and add the folder to your PATH.  Try running the installation steps again, and if it fails with a "Visual Studio Build Tools" error, then you will need to download https://visualstudio.microsoft.com/visual-cpp-build-tools/, install it, and select the "Desktop development with C++"
+
 
 Linux
 ```
-git clone https://github.com/andrew-ma/sim_csv_gui
-cd sim_csv_gui
-python3 -m pip install --upgrade --no-cache-dir .
+python3 -m pip install --upgrade -e .
 ```
-> _Linux_: if you get a "swig: not found" error while running the installation command, first ensure that Python 3.6 or later is installed ('`python3 --version`').  If so, install swig with '`sudo apt install swig`' and retry the installation command.
 
-> _Windows_: if you get a "swig.exe" error while running the installation command, you will need to download the swig prebuilt executable (http://www.swig.org/download.html), extract the zip, and add the folder to your PATH.  Then try running the installation again, and if it fails with a "Visual Studio Build Tools" error, then you will need to download https://visualstudio.microsoft.com/visual-cpp-build-tools/, install it, and select the "Desktop development with C++"
+> _Linux_: if you get a "swig: not found" error while running the installation command, first ensure that Python 3.6 or later is installed (`python3 --version`).  If so, install swig with `sudo apt install swig` and retry the installation command
 
 
 ---
@@ -59,7 +49,7 @@ Launch GUI
 sim_csv_gui
 ```
 
-To list valid field names that can used in CSV file
+To list valid field names that can used in the CSV file
 ```
 sim_csv_script --list-field-names
 ```
