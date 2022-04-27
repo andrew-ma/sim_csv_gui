@@ -11,6 +11,12 @@ GUI desktop application for reading and writing SIM cards values.
 
 * An external filter program that receives a CSV valid string  through STDIN, modifies field values, and outputs the modified CSV string through STDOUT can be supplied
 
+## Dependencies (Linux)
+```
+sudo apt-get install -y swig
+sudo apt-get install -y libpcsclite-dev
+```
+
 
 ## Installation
 ### Method #1: Source Distribution (`.tar.gz` file)
