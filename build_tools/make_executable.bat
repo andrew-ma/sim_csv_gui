@@ -34,14 +34,14 @@ call :new_venv
 %MY_PYTHON% -m pip install wheel setuptools
 
 :: Installing Dependencies from requirements.txt
-%MY_PYTHON% -m pip install -r requirements.txt
+%MY_PYTHON% -m pip install -r ..\requirements.txt
 
 :: Install latest version of Pyinstaller
 %MY_PYTHON% -m pip install https://github.com/pyinstaller/pyinstaller/archive/develop.zip
 
 :: Generate Standalone Executable ("PACKAGE_NAME.exe")
 @echo on
-call pyinstaller -n "%PACKAGE_NAME%" --icon=sim_icon.ico --upx-dir="%UPX_PATH%" --clean --noconsole -y --onefile "src/sim_csv_gui/app.py"
+call pyinstaller -n "%PACKAGE_NAME%" --icon=sim_icon.ico --upx-dir="%UPX_PATH%" --clean --noconsole -y --onefile "../src/sim_csv_gui/app.py"
 @echo off
 
 echo Finished with error code: %ERRORLEVEL%

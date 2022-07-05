@@ -5,8 +5,11 @@ set PACKAGE_NAME=sim_csv_gui
 set SKIP_GENERATE_AUTHORS=1
 set SKIP_WRITE_GIT_CHANGELOG=1
 
+:: Change directory to directory containing the setup.py, which is the parent directory
+pushd ..
+
 :: Delete folders
-call :delete_folders build dist venv .eggs src\%PACKAGE_NAME%.egg-info .qt_for_python __pycache__
+call :delete_folders build dist venv .eggs ..\src\%PACKAGE_NAME%.egg-info .qt_for_python __pycache__
 
 :: Create new virtual environment
 @REM call :new_venv
@@ -33,7 +36,10 @@ echo Finished with error code: %ERRORLEVEL%
 @REM call venv\Scripts\deactivate
 
 :: Delete folders except for dist
-call :delete_folders build .eggs src\%PACKAGE_NAME%.egg-info venv .qt_for_python __pycache__
+call :delete_folders build .eggs ..\src\%PACKAGE_NAME%.egg-info venv .qt_for_python __pycache__
+
+:: Change directory to original folder (where this script is run from)
+popd
 
 EXIT /B %ERRORLEVEL%
 

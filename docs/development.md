@@ -58,12 +58,12 @@ pyqt5-tools designer
 
 Windows
 ```
-python generate_ui_resource.py --package-name sim_csv_gui --ui-files src/sim_csv_gui/UI/ui_mainwindow.ui --resource-files src/sim_csv_gui/resources/resources.qrc --output-dir src/sim_csv_gui
+python build_tools\generate_ui_resource.py --package-name sim_csv_gui --ui-files src/sim_csv_gui/UI/ui_mainwindow.ui --resource-files src/sim_csv_gui/resources/resources.qrc --output-dir src/sim_csv_gui
 ```
 
 Linux
 ```
-python3 generate_ui_resource.py --package-name sim_csv_gui --ui-files src/sim_csv_gui/UI/ui_mainwindow.ui --resource-files src/sim_csv_gui/resources/resources.qrc --output-dir src/sim_csv_gui
+python3 build_tools/generate_ui_resource.py --package-name sim_csv_gui --ui-files src/sim_csv_gui/UI/ui_mainwindow.ui --resource-files src/sim_csv_gui/resources/resources.qrc --output-dir src/sim_csv_gui
 ```
 
 ---

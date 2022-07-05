@@ -1,7 +1,7 @@
 # SIM CSV GUI
 GUI desktop application for reading and writing SIM cards values.
 
-![Screenshot of GUI](https://github.com/andrew-ma/sim_csv_gui/blob/main/gui_screenshot.png?raw=true)
+![Screenshot of GUI](https://github.com/andrew-ma/sim_csv_gui/blob/main/docs/gui_screenshot.png?raw=true)
 
 * For reading and writing values, import a CSV file with `FieldName,FieldValue` columns
 
@@ -64,4 +64,4 @@ sim_csv_script --list-field-names
 
 ---
 
-## For [Development Documentation](development.md)
+## For [Development Documentation](docs/development.md)

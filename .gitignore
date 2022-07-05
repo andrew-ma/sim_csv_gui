@@ -12,6 +12,6 @@ venv/
 .eggs/
 upx-*/
 *.csv
-!spn_tmobile.csv
+!example_tmobile_spn.csv
 .pypirc
 *.json
